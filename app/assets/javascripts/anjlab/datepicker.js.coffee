@@ -1,4 +1,4 @@
-Locales = 
+Locales =
   en:
     dates:
       format: 'mm/dd/yyyy'
@@ -26,7 +26,7 @@ Locales =
       daysMin: ["Do", "Se", "Te", "Qu", "Qu", "Se", "Sa", "Do"]
       months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
       monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-  ru: 
+  ru:
     dates:
       format: 'dd.mm.yyyy'
       weekStart: 1
@@ -44,7 +44,7 @@ Locales =
       daysMin: ["日", "月", "火", "水", "木", "金", "土", "日"]
       months: ["１月", "２月", "３月", "４月", "５月", "６月", "７月", "８月", "９月", "10月", "11月", "12月"]
       monthsShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
-      
+
 
 DateTools =
   modes: [
@@ -66,7 +66,7 @@ DateTools =
   ]
   isLeapYear: (year) ->
     (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0))
-  
+
   getDaysInMonth: (year, month) ->
     [31, (if DateTools.isLeapYear(year) then 29 else 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month]
 
@@ -74,8 +74,8 @@ DateTools =
     separator = format.match(/[.\/-].*?/)
     parts = format.split(/\W+/)
     if !separator || !parts || parts.length == 0
-      throw new Error("Invalid date format.")  
-    
+      throw new Error("Invalid date format.")
+
     {
       separator: separator
       parts: parts
@@ -99,7 +99,7 @@ DateTools =
           when 'yyyy'
             y = val
       new Date(y, m, d)
-  
+
   formatDate: (date, format) ->
     return "" if date == null
     val = {
@@ -215,7 +215,7 @@ class Datepicker extends NativeRailsDatepicker
       else
         @element.on 'click', $.proxy(@show, this)
 
-    @startMode = options.startMode || 0
+    @startMode = options.startMode || @element.data('startmode') || 0
     @viewMode = @startMode
     @weekStart = options.weekStart || @element.data('date-weekstart') || Locales[@locale].dates.weekStart
     @weekEnd = if this.weekStart == 0 then 6 else @weekStart - 1
@@ -232,9 +232,9 @@ class Datepicker extends NativeRailsDatepicker
     if e
       e.stopPropagation()
       e.preventDefault()
-    
+
     $(document).on('mousedown', $.proxy(@hide, this)) if !@isInput
-    
+
     @element.trigger
       type: 'show'
       date: @date
@@ -299,7 +299,7 @@ class Datepicker extends NativeRailsDatepicker
       html.push '<span class="month">'
       html.push Locales[@locale].dates.monthsShort[i++]
       html.push '</span>'
-    
+
     @picker.find('.datepicker-months td').append(html.join(''))
 
   fill: ->
@@ -323,25 +323,25 @@ class Datepicker extends NativeRailsDatepicker
 
     while prevMonth.valueOf() < nextMonth
       html.push '<tr>' if prevMonth.getDay() == @weekStart
-        
+
       clsName = '';
       if prevMonth.getMonth() < month
-        clsName += ' old'   
+        clsName += ' old'
       else if prevMonth.getMonth() > month
         clsName += ' new'
-      
+
       if prevMonth.valueOf() == currentDate
         clsName += ' active'
-      
+
       html.push "<td class='day#{clsName}'>#{prevMonth.getDate()}</td>"
       html.push '</tr>' if prevMonth.getDay() == @weekEnd
-        
+
       prevMonth.setDate(prevMonth.getDate()+1)
-    
+
 
     @picker.find('.datepicker-days tbody').empty().append(html.join(''))
     currentYear = date.getFullYear()
-    
+
     months = @picker.find('.datepicker-months').find('th:eq(1)').text(year).end().find('span').removeClass('active')
     months.eq(date.getMonth()).addClass('active') if currentYear == year
 
@@ -367,7 +367,7 @@ class Datepicker extends NativeRailsDatepicker
             when 'prev', 'next'
               @viewDate['set'+DateTools.modes[this.viewMode].navFnc].call(
                 @viewDate,
-                @viewDate['get'+DateTools.modes[this.viewMode].navFnc].call(@viewDate) + 
+                @viewDate['get'+DateTools.modes[this.viewMode].navFnc].call(@viewDate) +
                 DateTools.modes[this.viewMode].navStep * (if target[0].className == 'prev' then -1 else 1))
               @fill()
         when 'span'
@@ -387,7 +387,7 @@ class Datepicker extends NativeRailsDatepicker
               month -= 1
             else if target.is('.new')
               month += 1
-            
+
             year = @viewDate.getFullYear()
             @date = new Date(year, month, day,0,0,0,0);
             @viewDate = new Date(year, month, day,0,0,0,0);
@@ -421,7 +421,7 @@ convertToNative = ($input, options)->
       parts: ["yyyy", "mm", "dd"]
     })
     $input.prop('value', value)
-  
+
 
 $.fn.datepicker = (option) ->
   @each ->
